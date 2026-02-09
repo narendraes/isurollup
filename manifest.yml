@@ -1,0 +1,83 @@
+modules:
+  # ── Custom Field Definition ──────────────────────────────────────────
+  jira:customField:
+    - key: isurollup
+      name: Child Metrics
+      description: >
+        Displays aggregated metrics (story points, % complete, undone work,
+        custom formulas) computed from child and grandchild issues.
+        Values are stored in issue properties to avoid change-history noise.
+      type: string
+      value: computeFieldValue
+      readView: computed-field-view
+      listView: computed-field-list
+      searcher: text
+
+  # ── Custom UI Resources ──────────────────────────────────────────────
+  customUI:
+    - key: computed-field-view
+      resource: field-view
+      render: native
+    - key: computed-field-list
+      resource: field-list
+      render: native
+    - key: admin-page-ui
+      resource: admin-page
+      render: native
+
+  # ── Event Triggers ───────────────────────────────────────────────────
+  trigger:
+    - key: on-issue-created
+      function: recomputeParentMetrics
+      events:
+        - avi:jira:created:issue
+    - key: on-issue-updated
+      function: recomputeParentMetrics
+      events:
+        - avi:jira:updated:issue
+    - key: on-issue-deleted
+      function: recomputeParentMetrics
+      events:
+        - avi:jira:deleted:issue
+
+  # ── Admin Configuration Page ─────────────────────────────────────────
+  jira:adminPage:
+    - key: field-config-page
+      title: Computed Child Metrics — Configuration
+      resource: admin-page
+      render: native
+
+  # ── Backend Functions ────────────────────────────────────────────────
+  function:
+    - key: computeFieldValue
+      handler: src/index.computeFieldValue
+    - key: recomputeParentMetrics
+      handler: src/index.recomputeParentMetrics
+    - key: resolver
+      handler: src/index.handler
+
+# ── Static Resources (Custom UI builds) ─────────────────────────────
+resources:
+  - key: field-view
+    path: static/field-view/build
+  - key: field-list
+    path: static/field-list/build
+  - key: admin-page
+    path: static/admin-page/build
+
+# ── Permissions ──────────────────────────────────────────────────────
+permissions:
+  scopes:
+    - read:jira-work
+    - write:jira-work
+    - storage:app
+  external:
+    fetch:
+      backend:
+        - '*.atlassian.net'
+
+app:
+  runtime:
+    name: nodejs18.x
+  id: ari:cloud:ecosystem::app/<YOUR_APP_ID>
+  name: isurollup

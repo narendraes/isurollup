@@ -1,0 +1,37 @@
+{
+  "name": "isurollup",
+  "version": "1.0.0",
+  "description": "Forge app — computed child/grandchild metrics as a colour-coded custom field",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "build:ui": "npm --prefix static/field-view run build && npm --prefix static/field-list run build && npm --prefix static/admin-page run build",
+    "lint": "eslint src/ --ext .ts",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "deploy": "npm run build:ui && forge deploy",
+    "install:all": "npm install && npm --prefix static/field-view install && npm --prefix static/field-list install && npm --prefix static/admin-page install"
+  },
+  "dependencies": {
+    "@forge/api": "^4.0.0",
+    "@forge/resolver": "^1.6.0"
+  },
+  "devDependencies": {
+    "@forge/lint": "^3.4.0",
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.10.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.3.0"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "testMatch": ["**/__tests__/**/*.test.ts"],
+    "collectCoverageFrom": [
+      "src/**/*.ts",
+      "!src/index.ts"
+    ]
+  },
+  "license": "MIT"
+}
